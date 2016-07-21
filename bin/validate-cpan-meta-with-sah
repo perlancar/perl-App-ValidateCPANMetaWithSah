@@ -73,7 +73,7 @@ Perinci::CmdLine::Any->new(
  % validate-cpan-meta-with-sah path/to/META.json; # or path/to/META.yml
 
 
-=head2 SEE ALSO
+=head1 SEE ALSO
 
 L<validate-with-sah>. You can also try using:
 
