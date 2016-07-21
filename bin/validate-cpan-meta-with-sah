@@ -1,0 +1,83 @@
+#!perl
+
+use 5.010001;
+use strict;
+use warnings;
+
+use Perinci::CmdLine::Any;
+
+our %SPEC;
+
+$SPEC{validate_cpan_meta_with_sah} = {
+    v => 1.1,
+    summary => 'Validate CPAN Meta with Sah schema',
+    args => {
+        file => {
+            schema => 'filename*',
+            req => 1,
+            pos => 0,
+        },
+    },
+};
+sub validate_cpan_meta_with_sah {
+    require Data::Sah;
+    require File::Slurper;
+
+    my %args = @_;
+    my $file = $args{file};
+    my $content = File::Slurper::read_text($file);
+
+    my $cpanmeta;
+    if ($file =~ /\.json$/i) {
+        require JSON::MaybeXS;
+        $cpanmeta = JSON::MaybeXS::decode_json($content);
+    } else {
+        require YAML::XS;
+        $cpanmeta = YAML::XS::Load($content);
+    }
+
+    my $validator = Data::Sah::gen_validator(
+        'cpan::meta20*',
+        {return_type => 'full'},
+    );
+
+    my $res = $validator->($cpanmeta);
+    my $is_error;
+
+    if ($res->{errors} && keys %{ $res->{errors} }) {
+        $is_error++;
+        for my $loc (sort keys %{ $res->{errors} }) {
+            warn "ERROR: $res->{errors}{$loc}\n";
+        }
+    }
+
+    if ($res->{warnings} && keys %{ $res->{warnings} }) {
+        for my $loc (sort keys %{ $res->{warnings} }) {
+            warn "WARN: $res->{warnings}{$loc}\n";
+        }
+    }
+
+    [$is_error ? 400:200, $is_error ? "Does not validate":"Validates",
+     undef, {"func.raw"=>$res}];
+}
+
+Perinci::CmdLine::Any->new(
+        url => '/main/validate_cpan_meta_with_sah',
+)->run;
+
+# ABSTRACT:
+# PODNAME:
+
+=head1 SYNOPSIS
+
+ % validate-cpan-meta-with-sah path/to/META.json; # or path/to/META.yml
+
+
+=head2 SEE ALSO
+
+L<validate-with-sah>. You can also try using:
+
+ % validate-with-sah -m cpan::meta20 --data-file path/to/META.json
+
+There are some options you can play with, e.g. C<--return-type full>,
+C<--with-debug>, etc.
