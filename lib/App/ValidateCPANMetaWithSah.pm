@@ -15,3 +15,8 @@ See the included L<validate-cpan-meta-with-sah>.
 
 This is a proof-of-concept for validating CPAN Meta specification with Sah
 schema.
+
+
+=head1 SEE ALSO
+
+L<CPAN::Meta>, L<CPAN::Meta::Validator>

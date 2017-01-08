@@ -81,3 +81,7 @@ L<validate-with-sah>. You can also try using:
 
 There are some options you can play with, e.g. C<--return-type full>,
 C<--with-debug>, etc.
+
+L<Sah::Schema::cpan::meta20>
+
+L<CPAN::Meta>, L<CPAN::Meta::Validator>
