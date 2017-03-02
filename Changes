@@ -1,4 +1,9 @@
-0.003   2017-03-02 (PERLANCAR) (unreleased)
+0.004   2017-03-02 (PERLANCAR)
+
+        - Add utility: gen-cpan-meta.
+
+
+0.003   2017-03-02 (PERLANCAR)
 
 	- [Incompatible] Rename dist from App-ValidateCPANMetaWithSah to
 	  App-CPANMetaUtils.
