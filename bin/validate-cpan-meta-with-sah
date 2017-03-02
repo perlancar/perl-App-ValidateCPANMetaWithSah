@@ -14,7 +14,6 @@ $SPEC{validate_cpan_meta_with_sah} = {
     args => {
         file => {
             schema => 'filename*',
-            req => 1,
             pos => 0,
         },
     },
@@ -25,6 +24,15 @@ sub validate_cpan_meta_with_sah {
 
     my %args = @_;
     my $file = $args{file};
+    unless (defined $file) {
+        if (-f "META.json") {
+            $file = "META.json";
+        } elsif (-f "META.yml") {
+            $file = "META.yml";
+        } else {
+            return [400, "Please specify file"];
+        }
+    }
     my $content = File::Slurper::read_text($file);
 
     my $cpanmeta;

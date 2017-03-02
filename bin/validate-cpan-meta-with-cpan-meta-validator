@@ -1,0 +1,71 @@
+#!perl
+
+use 5.010001;
+use strict;
+use warnings;
+
+use Perinci::CmdLine::Any;
+
+our %SPEC;
+
+$SPEC{validate_cpan_meta_with_cpan_meta_validator} = {
+    v => 1.1,
+    summary => 'Validate CPAN Meta with CPAN::Meta::Validator',
+    args => {
+        file => {
+            schema => 'filename*',
+            req => 1,
+            pos => 0,
+        },
+    },
+};
+sub validate_cpan_meta_with_cpan_meta_validator {
+    require CPAN::Meta::Validator;
+    require File::Slurper;
+
+    my %args = @_;
+    my $file = $args{file};
+    unless (defined $file) {
+        if (-f "META.json") {
+            $file = "META.json";
+        } elsif (-f "META.yml") {
+            $file = "META.yml";
+        } else {
+            return [400, "Please specify file"];
+        }
+    }
+    my $content = File::Slurper::read_text($file);
+
+    my $cpanmeta;
+    if ($file =~ /\.json$/i) {
+        require JSON::MaybeXS;
+        $cpanmeta = JSON::MaybeXS::decode_json($content);
+    } else {
+        require YAML::XS;
+        $cpanmeta = YAML::XS::Load($content);
+    }
+
+    my $cmv = CPAN::Meta::Validator->new($cpanmeta);
+    return [200, "OK"] if $cmv->is_valid;
+
+    [400, "Invalid META structure (use --json to show details)",
+     [$cmv->errors]];
+}
+
+Perinci::CmdLine::Any->new(
+        url => '/main/validate_cpan_meta_with_cpan_meta_validator',
+)->run;
+
+# ABSTRACT:
+# PODNAME:
+
+=head1 SYNOPSIS
+
+ % validate-cpan-meta-with-cpan-meta-validator path/to/META.json; # or path/to/META.yml
+
+
+=head1 SEE ALSO
+
+L<validate-cpan-meta-with-sah>
+
+L<CPAN::Meta>, L<CPAN::Meta::Validator>
