@@ -14,7 +14,6 @@ $SPEC{validate_cpan_meta_with_cpan_meta_validator} = {
     args => {
         file => {
             schema => 'filename*',
-            req => 1,
             pos => 0,
         },
     },
@@ -48,8 +47,10 @@ sub validate_cpan_meta_with_cpan_meta_validator {
     my $cmv = CPAN::Meta::Validator->new($cpanmeta);
     return [200, "OK"] if $cmv->is_valid;
 
-    [400, "Invalid META structure (use --json to show details)",
-     [$cmv->errors]];
+    my @errors = $cmv->errors;
+    warn "ERROR: $_\n" for @errors;
+
+    [400, "Invalid META structure", undef, {'func.raw'=>\@errors}];
 }
 
 Perinci::CmdLine::Any->new(
