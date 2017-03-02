@@ -1,3 +1,11 @@
+0.003   2017-03-02 (PERLANCAR) (unreleased)
+
+        - Rename dist from App-ValidateCPANMetaWithSahSchema to
+          App-CPANMetaUtils.
+
+        - Add script: validate-cpan-meta-with-cpan-meta-validator.
+
+
 0.002   2017-01-08 (PERLANCAR)
 
 	- No functional changes.
