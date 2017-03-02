@@ -1,9 +1,12 @@
 0.003   2017-03-02 (PERLANCAR) (unreleased)
 
-        - Rename dist from App-ValidateCPANMetaWithSahSchema to
-          App-CPANMetaUtils.
+	- [Incompatible] Rename dist from App-ValidateCPANMetaWithSah to
+	  App-CPANMetaUtils.
 
         - Add script: validate-cpan-meta-with-cpan-meta-validator.
+
+        - [ux] When file is not specified, look at current dir's
+          META.json/META.yml.
 
 
 0.002   2017-01-08 (PERLANCAR)
