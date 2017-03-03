@@ -25,9 +25,14 @@ name, `version` from the main module, `prereqs` using <pm:App::ScanPrereqs> and
 so on. Finally it will validate its generated META.json first before outputing
 it, printing found errors to stderr.
 
+This utility can be used to generate (at least the preliminary version of)
+`META.json` for dists that do not yet have `META.json`.
+
 _
     args => {
         dir => {
+            summary => 'Instead of current dir, use this directory as the '.
+                'top-level dist directory',
             schema => 'dirname*',
             pos => 0,
         },
