@@ -1,3 +1,11 @@
+0.005   2017-03-03 (PERLANCAR)
+
+	- Tweak Rinci metadata.
+
+	- [Bugfix] gen-cpan-meta: We haven't validated the generated CPAN
+	  META.
+
+
 0.004   2017-03-02 (PERLANCAR)
 
         - Add utility: gen-cpan-meta.
