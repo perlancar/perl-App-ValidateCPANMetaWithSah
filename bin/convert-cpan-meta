@@ -1,5 +1,8 @@
 #!perl
 
+# DATE
+# VERSION
+
 use 5.010001;
 use strict;
 use warnings;
@@ -34,6 +37,8 @@ _
         {
             summary => 'Convert META.yml (1.4) to META.json (2.0)',
             argv => [qw/--version 2/],
+            test => 0,
+            'x.doc.show_result' => 0,
         },
     ],
 };
