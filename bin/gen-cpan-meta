@@ -22,9 +22,8 @@ This utility assumes it is run in the top-level directory of a Perl distribution
 and will try to generate a CPAN META structure for the distribution. For
 example: `abstract` will be searched from POD, `name` from the shortest package
 name, `version` from the main module, `prereqs` using <pm:App::ScanPrereqs> and
-so on.
-
-Finally it will validate its generated META.json first before outputing it.
+so on. Finally it will validate its generated META.json first before outputing
+it, printing found errors to stderr.
 
 _
     args => {
@@ -38,6 +37,7 @@ _
 };
 sub gen_cpan_meta {
     require App::ScanPrereqs;
+    require CPAN::Meta::Validator;
     require File::Find::Wanted;
     require File::Slurper;
     require JSON;
@@ -161,6 +161,14 @@ sub gen_cpan_meta {
     # XXX resources
 
     # XXX x_authority?
+
+    # let's validate it first
+    {
+        my $cmv = CPAN::Meta::Validator->new($meta);
+        unless ($cmv->is_valid) {
+            print "WARN: Error from validator: $_\n" for $cmv->errors;
+        }
+    }
 
     [200, "OK", JSON->new->canonical(1)->pretty->encode($meta)];
 }
