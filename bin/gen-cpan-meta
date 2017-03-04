@@ -16,7 +16,7 @@ our %SPEC;
 
 $SPEC{gen_cpan_meta} = {
     v => 1.1,
-    summary => 'Generate CPAN Meta (2.0, META.json) for a dist',
+    summary => 'Generate CPAN META for a distribution',
     description => <<'_',
 
 NOTE: EARLY VERSION.
