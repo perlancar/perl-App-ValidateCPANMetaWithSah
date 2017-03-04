@@ -1,0 +1,124 @@
+#!perl
+
+# DATE
+# VERSION
+
+use 5.010001;
+use strict;
+use warnings;
+
+use Perinci::CmdLine::Any;
+
+our %SPEC;
+
+$SPEC{validate_cpan_meta} = {
+    v => 1.1,
+    summary => 'Validate CPAN META',
+    args => {
+        file => {
+            schema => 'filename*',
+            pos => 0,
+        },
+        method => {
+            summary => 'Choose the method of validation',
+            schema => ['str*', in=>['sah', 'cmv']],
+            default => 'cmv',
+            description => <<'_',
+
+`cmv` which is the default means to use <pm:CPAN::Meta::Validator> which is the
+"official way". Another alternative is to use <pm:Data::Sah> and the schema
+<pm:Sah::Schema::cpan::meta20>.
+
+_
+        },
+    },
+};
+sub validate_cpan_meta {
+    require File::Slurper;
+
+    my %args = @_;
+    my $method = $args{method} // 'cmv';
+    my $file = $args{file};
+    unless (defined $file) {
+        if (-f "META.json") {
+            $file = "META.json";
+        } elsif (-f "META.yml") {
+            $file = "META.yml";
+        } else {
+            return [400, "Please specify file"];
+        }
+    }
+    my $content = File::Slurper::read_text($file);
+
+    my $cpanmeta;
+    if ($file =~ /\.json$/i) {
+        require JSON::MaybeXS;
+        $cpanmeta = JSON::MaybeXS::decode_json($content);
+    } else {
+        require YAML::XS;
+        $cpanmeta = YAML::XS::Load($content);
+    }
+
+    my $is_error;
+    my $raw_res;
+    if ($method eq 'cmv') {
+        require CPAN::Meta::Validator;
+        my $cmv = CPAN::Meta::Validator->new($cpanmeta);
+        unless ($cmv->is_valid) {
+            my @errors = $cmv->errors;
+            warn "ERROR: $_\n" for @errors;
+            $is_error++;
+            $raw_res = \@errors;
+        }
+    } elsif ($method eq 'sah') {
+        require Data::Sah;
+        my $validator = Data::Sah::gen_validator(
+            'cpan::meta20*',
+            {return_type => 'full'},
+        );
+        $raw_res = $validator->($cpanmeta);
+
+        if ($raw_res->{errors} && keys %{ $raw_res->{errors} }) {
+            $is_error++;
+            for my $loc (sort keys %{ $raw_res->{errors} }) {
+                warn "ERROR: $raw_res->{errors}{$loc}\n";
+            }
+        }
+
+        if ($raw_res->{warnings} && keys %{ $raw_res->{warnings} }) {
+            for my $loc (sort keys %{ $raw_res->{warnings} }) {
+                warn "WARN: $raw_res->{warnings}{$loc}\n";
+            }
+        }
+    } else {
+        return [400, "Unknown method '$method'"];
+    }
+
+    [
+        $is_error ? 400:200,
+        $is_error ? "Does not validate":"Validates",
+        undef,
+        {
+            ("func.raw"=>$raw_res) x !!defined($raw_res),
+        },
+    ];
+}
+
+Perinci::CmdLine::Any->new(
+        url => '/main/validate_cpan_meta',
+)->run;
+
+# ABSTRACT:
+# PODNAME:
+
+=head1 SYNOPSIS
+
+ % validate-cpan-meta path/to/META.json; # or path/to/META.yml
+ % validate-cpan-meta path/to/META.json --method sah ;# use Sah schema instead of CPAN::Meta::Validator to validate
+
+
+=head1 SEE ALSO
+
+L<CPAN::Meta>, L<CPAN::Meta::Validator>
+
+L<Data::Sah>, L<Sah::Schema::cpan::meta20>
