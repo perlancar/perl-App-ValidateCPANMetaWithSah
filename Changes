@@ -1,3 +1,10 @@
+0.007   2017-03-04 (PERLANCAR)
+
+	- [Incompatible] Merge
+	  validate-cpan-meta-with-{sah,cpan-meta-validator} into
+	  validate-cpan-meta.
+
+
 0.006   2017-03-03 (PERLANCAR)
 
         - Add utility: convert-cpan-meta.
