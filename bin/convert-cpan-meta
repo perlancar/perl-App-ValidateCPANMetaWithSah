@@ -45,7 +45,7 @@ _
 sub convert_cpan_meta {
     require CPAN::Meta::Converter;
     require File::Slurper;
-    require JSON;
+    require JSON::MaybeXS;
     require YAML::XS;
 
     my %args = @_;
@@ -69,7 +69,7 @@ sub convert_cpan_meta {
         $meta = YAML::XS::Load($content);
     } elsif ($file =~ /\.json$/i) {
         $from_version //= "2.0";
-        $meta = JSON->new->decode($content);
+        $meta = JSON::MaybeXS->new->decode($content);
     }
 
     my $cmc = CPAN::Meta::Converter->new($meta);
@@ -77,7 +77,7 @@ sub convert_cpan_meta {
         version => $to_version,
     );
 
-    [200, "OK", JSON->new->canonical(1)->pretty->encode($meta)];
+    [200, "OK", JSON::MaybeXS->new->canonical(1)->pretty->encode($meta)];
 }
 
 Perinci::CmdLine::Any->new(

@@ -48,7 +48,7 @@ sub gen_cpan_meta {
     require CPAN::Meta::Validator;
     require File::Find::Wanted;
     require File::Slurper;
-    require JSON;
+    require JSON::MaybeXS;
 
     my %args = @_;
 
@@ -178,7 +178,7 @@ sub gen_cpan_meta {
         }
     }
 
-    [200, "OK", JSON->new->canonical(1)->pretty->encode($meta)];
+    [200, "OK", JSON::MaybeXS->new->canonical(1)->pretty->encode($meta)];
 }
 
 Perinci::CmdLine::Any->new(
