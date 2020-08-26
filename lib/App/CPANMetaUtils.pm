@@ -1,6 +1,8 @@
 package App::CPANMetaUtils;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 1;
