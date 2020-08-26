@@ -1,6 +1,8 @@
 #!perl
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;
@@ -25,8 +27,8 @@ $SPEC{validate_cpan_meta} = {
             default => 'cmv',
             description => <<'_',
 
-`cmv` which is the default means to use <pm:CPAN::Meta::Validator> which is the
-"official way". Another alternative is to use <pm:Data::Sah> and the schema
+`cmv` (which is the default) means to use <pm:CPAN::Meta::Validator> which is
+the "official way". Another alternative is to use <pm:Data::Sah> and the schema
 <pm:Sah::Schema::cpan::meta20>.
 
 _
