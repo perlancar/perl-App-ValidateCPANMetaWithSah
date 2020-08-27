@@ -18,7 +18,8 @@ $SPEC{convert_cpan_meta} = {
     summary => 'Convert CPAN META',
     description => <<'_',
 
-Will output the new META as JSON.
+This utility converts CPAN META from one version to another. Will output the new
+META as JSON.
 
 _
     args => {
@@ -36,7 +37,7 @@ _
     examples => [
         {
             summary => 'Convert META.yml (1.4) to META.json (2.0)',
-            argv => [qw/--version 2/],
+            argv => [qw/META.yml --to-version 2/],
             test => 0,
             'x.doc.show_result' => 0,
         },

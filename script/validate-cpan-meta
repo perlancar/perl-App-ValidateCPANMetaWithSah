@@ -16,6 +16,11 @@ our %SPEC;
 $SPEC{validate_cpan_meta} = {
     v => 1.1,
     summary => 'Validate CPAN META',
+    description => <<'_',
+
+This utility can check your CPAN META file using one of the available methods.
+
+_
     args => {
         file => {
             schema => 'filename*',
